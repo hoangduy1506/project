@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import math
 
+# Đọc file và parse data
 file_path = "D:\\git\\project\\01_python\\01_dist_n_angle\\00_data\\storeDataCalculated.csv"
 df = pd.read_csv(file_path)
 num_rows, num_columns = df.shape
@@ -37,7 +38,8 @@ matrix_T = [
 matrix_T = np.array(matrix_T)
 
 sample = P1[:,654]
-result = matrix_T @ sample
+print(sample)
+result = np.dot(matrix_T, sample)
 print(result)
 
 Pnew = np.dot(matrix_T, P1)
@@ -46,13 +48,15 @@ Pnew = np.dot(matrix_T, P1)
 x_coords = Pnew[0, :]  # Cột 0 là tọa độ x
 y_coords = Pnew[1, :]  # Cột 1 là tọa độ y
 
-fig, ax = plt.subplots(1, 1)
+print("Abs X0 - X_C = ", abs(x0[654+356]-x_coords[654]))
 
-ax.scatter(x0,y0,s=0.1,c='green')
+# fig, ax = plt.subplots(1, 1)
+
+# ax.scatter(x0,y0,s=0.1,c='green')
 # ax.scatter(x1, y1, s=0.1, c = 'red')
-ax.scatter(x_coords, y_coords, s=0.1, c = 'blue')
-ax.scatter(0, 0, s=30, c = 'red')
-ax.set_xlim(-400, 400)
-ax.set_ylim(-400, 400)
+# ax.scatter(x_coords, y_coords, s=0.1, c = 'blue')
+# ax.scatter(0, 0, s=30, c = 'red')
+# ax.set_xlim(-400, 400)
+# ax.set_ylim(-400, 400)
 
-plt.show()
+# plt.show()
