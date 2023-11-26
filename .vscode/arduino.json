@@ -1,0 +1,4 @@
+{
+    "board": "arduino:avr:uno",
+    "sketch": "00_adruino\\00_lidar_read\\00_lidar_read.ino"
+}
