@@ -28,179 +28,229 @@ xAxes=[]
 yAxes=[]
 posArray= []
 
-# Define function drawing 3D Mapping 
-def drawing3D():
-    # myFigure = plt.figure(dpi=200, figsize=(10,10))
-    # ax = plt.axes(projection ='3d')
-    xAxes=[]
-    yAxes=[]
-    zAxes=[]
+# # Define function drawing 3D Mapping 
+# def drawing3D():
+#     # myFigure = plt.figure(dpi=200, figsize=(10,10))
+#     # ax = plt.axes(projection ='3d')
+#     xAxes=[]
+#     yAxes=[]
+#     zAxes=[]
     
-    xAxes1=[]
-    yAxes1=[]
-    zAxes1=[]
+#     xAxes1=[]
+#     yAxes1=[]
+#     zAxes1=[]
     
-    xAxes2=[]
-    yAxes2=[]
-    zAxes2=[]
+#     xAxes2=[]
+#     yAxes2=[]
+#     zAxes2=[]
     
-    limit_of_data = True
-    changePOV= True
-    # Read file to store # 
-    with open("data3D.txt", "a") as file:
-       while limit_of_data:
-           while arduino.in_waiting == 0:
-                pass
-            # Read data from arduino # 
-           dataPacket = arduino.readline()
-           dataPacket  = str(dataPacket, 'utf-8')    
-           dataPacket  = dataPacket.strip('\r\n')
-           if (dataPacket == 'End Data'):
-                limit_of_data = False
-           else:
-                # Calculate to draw 3D # 
-                splitData = dataPacket.split(',')
-                dist    = float(splitData[2])
-                pitch   = float(splitData[1]) *3.14/180
-                yaw     = float(splitData[0]) *3.14/180
+#     limit_of_data = True
+#     changePOV= True
+#     # Read file to store # 
+#     with open("data3D.txt", "a") as file:
+#        while limit_of_data:
+#            while arduino.in_waiting == 0:
+#                 pass
+#             # Read data from arduino # 
+#            dataPacket = arduino.readline()
+#            dataPacket  = str(dataPacket, 'utf-8')    
+#            dataPacket  = dataPacket.strip('\r\n')
+#            if (dataPacket == 'End Data'):
+#                 limit_of_data = False
+#            else:
+#                 # Calculate to draw 3D # 
+#                 splitData = dataPacket.split(',')
+#                 dist    = float(splitData[2])
+#                 pitch   = float(splitData[1]) *3.14/180
+#                 yaw     = float(splitData[0]) *3.14/180
                 
-                xAxes.append(dist*(np.cos(pitch))*(np.cos(yaw)))
-                yAxes.append(dist*(np.cos(pitch))*(np.sin(yaw)))
-                zAxes.append(dist*(np.sin(pitch)))
+#                 xAxes.append(dist*(np.cos(pitch))*(np.cos(yaw)))
+#                 yAxes.append(dist*(np.cos(pitch))*(np.sin(yaw)))
+#                 zAxes.append(dist*(np.sin(pitch)))
                 
-                if(yaw>0 and yaw<=3.14):
-                    xAxes1.append(dist*(np.cos(pitch))*(np.cos(yaw)))
-                    yAxes1.append(dist*(np.cos(pitch))*(np.sin(yaw)))
-                    zAxes1.append(dist*(np.sin(pitch)))
+#                 if(yaw>0 and yaw<=3.14):
+#                     xAxes1.append(dist*(np.cos(pitch))*(np.cos(yaw)))
+#                     yAxes1.append(dist*(np.cos(pitch))*(np.sin(yaw)))
+#                     zAxes1.append(dist*(np.sin(pitch)))
                     
-                elif(yaw>3.14 and yaw<=6.28):
-                    xAxes2.append(dist*(np.cos(pitch))*(np.cos(yaw)))
-                    yAxes2.append(dist*(np.cos(pitch))*(np.sin(yaw)))
-                    zAxes2.append(dist*(np.sin(pitch)))
+#                 elif(yaw>3.14 and yaw<=6.28):
+#                     xAxes2.append(dist*(np.cos(pitch))*(np.cos(yaw)))
+#                     yAxes2.append(dist*(np.cos(pitch))*(np.sin(yaw)))
+#                     zAxes2.append(dist*(np.sin(pitch)))
 
                 
-                xTemp= dist*(np.cos(pitch))*(np.cos(yaw))               
-                yTemp= dist*(np.cos(pitch))*(np.sin(yaw))
-                zTemp= dist*(np.sin(pitch))
+#                 xTemp= dist*(np.cos(pitch))*(np.cos(yaw))               
+#                 yTemp= dist*(np.cos(pitch))*(np.sin(yaw))
+#                 zTemp= dist*(np.sin(pitch))
                 
-                print(xTemp,yTemp,zTemp, dist)
+#                 print(xTemp,yTemp,zTemp, dist)
                 
-                file.write(str(xTemp) + " " + str(yTemp) + " " + str(zTemp))
-                file.write('\n')
+#                 file.write(str(xTemp) + " " + str(yTemp) + " " + str(zTemp))
+#                 file.write('\n')
     
-    # loop to input and display user-defined elev, azim, roll
-    while changePOV:
-        # get user input for elev, azim, roll
-        elev = input("Enter the elevation angle in degrees: ")
-        if elev == 'end':
-            changePOV= False
-            break
-        elev = int(elev)
+#     # loop to input and display user-defined elev, azim, roll
+#     while changePOV:
+#         # get user input for elev, azim, roll
+#         elev = input("Enter the elevation angle in degrees: ")
+#         if elev == 'end':
+#             changePOV= False
+#             break
+#         elev = int(elev)
 
-        azim = input("Enter the azimuth angle in degrees: ")
-        if azim == 'end':
-            changePOV= False
-            break
-        azim = int(azim)
+#         azim = input("Enter the azimuth angle in degrees: ")
+#         if azim == 'end':
+#             changePOV= False
+#             break
+#         azim = int(azim)
 
-        roll = input("Enter the roll angle in degrees: ")
-        if roll == 'end':
-            changePOV= False
-            break
-        roll = int(roll)
+#         roll = input("Enter the roll angle in degrees: ")
+#         if roll == 'end':
+#             changePOV= False
+#             break
+#         roll = int(roll)
         
-        POVMode= input("Enter the POVMode: ")
-        if POVMode== 'end':
-            changePOV= False
-            break
-        POVMode= int(POVMode) 
-        # POVMode=1 to view 0-180 || POVMode=2 to view 180-360 || POVMode=0 To view full
+#         POVMode= input("Enter the POVMode: ")
+#         if POVMode== 'end':
+#             changePOV= False
+#             break
+#         POVMode= int(POVMode) 
+#         # POVMode=1 to view 0-180 || POVMode=2 to view 180-360 || POVMode=0 To view full
         
         
-        if(1==POVMode):
-            myFigure = plt.figure(dpi=200, figsize=(10,10))
-            ax1 = plt.axes(projection ='3d')
-            ax1.view_init(elev, azim, roll)  
-            ax1.scatter(xAxes1,yAxes1,zAxes1,s=0.1,c='green')
-            ax1.scatter(xAxes1[0], yAxes1[0ion ='3d')
-            ax2.view_init(elev, azim, roll)  
-            ax2.scatter(xAxes2,yAxes2,zAxes2,s=0.1,c='green')
-            ax2.scatter(xAxes2[0], yAxes2[0], zAxes2[0], s=30, c = 'red')
-            plt.title('Elevation: %d°, Azimuth: %d°, Roll: %d°' % (elev, azim, roll))
-            # display the plot
-            plt.show()
+#         if(1==POVMode):
+#             myFigure = plt.figure(dpi=200, figsize=(10,10))
+#             ax1 = plt.axes(projection ='3d')
+#             ax1.view_init(elev, azim, roll)  
+#             ax1.scatter(xAxes1,yAxes1,zAxes1,s=0.1,c='green')
+#             ax1.scatter(xAxes1[0], yAxes1[0ion ='3d')
+#             ax2.view_init(elev, azim, roll)  
+#             ax2.scatter(xAxes2,yAxes2,zAxes2,s=0.1,c='green')
+#             ax2.scatter(xAxes2[0], yAxes2[0], zAxes2[0], s=30, c = 'red')
+#             plt.title('Elevation: %d°, Azimuth: %d°, Roll: %d°' % (elev, azim, roll))
+#             # display the plot
+#             plt.show()
         
-        else:
-            myFigure = plt.figure(dpi=200, figsize=(10,10))
-            ax = plt.axes(projection ='3d')
-            ax.view_init(elev, azim, roll)  
-            ax.scatter(xAxes,yAxes,zAxes,s=0.1,c='green')
-            ax.scatter(xAxes[0], yAxes[0], zAxes[0], s=30, c = 'red')
-            plt.title('Elevation: %d°, Azimuth: %d°, Roll: %d°' % (elev, azim, roll))
-            # display the plot
-            plt.show()       
+#         else:
+#             myFigure = plt.figure(dpi=200, figsize=(10,10))
+#             ax = plt.axes(projection ='3d')
+#             ax.view_init(elev, azim, roll)  
+#             ax.scatter(xAxes,yAxes,zAxes,s=0.1,c='green')
+#             ax.scatter(xAxes[0], yAxes[0], zAxes[0], s=30, c = 'red')
+#             plt.title('Elevation: %d°, Azimuth: %d°, Roll: %d°' % (elev, azim, roll))
+#             # display the plot
+#             plt.show()       
 
-# Use for collect only 1 yawDegree #
-def checkInArray(value):
-    idx=0
+# # Use for collect only 1 yawDegree #
+# def checkInArray(value):
+#     idx=0
 
-    # If posArray is empty -> Get the value to Array # 
-    if(len(posArray)==0):
-         posArray.append(value)
-    # Else if posArray already has -> return 0 to not add to Array # 
-    else:
-        for idx in range(len(posArray)):
-            if(value== posArray[idx]):
-                return 0
-        return 1
+#     # If posArray is empty -> Get the value to Array # 
+#     if(len(posArray)==0):
+#          posArray.append(value)
+#     # Else if posArray already has -> return 0 to not add to Array # 
+#     else:
+#         for idx in range(len(posArray)):
+#             if(value== posArray[idx]):
+#                 return 0
+#         return 1
 
 
-# Process Array to get posArray that is an array to store only one value for each yawDegree # 
-def processArray():
-    idx=0
-    for idx in range(8000):                                    
-        if(checkInArray(array_2d[0][idx].value1)==1):
-            posArray.append(array_2d[0][idx].value1)
+# # Process Array to get posArray that is an array to store only one value for each yawDegree # 
+# def processArray():
+#     idx=0
+#     for idx in range(8000):                                    
+#         if(checkInArray(array_2d[0][idx].value1)==1):
+#             posArray.append(array_2d[0][idx].value1)
 
-# Function to calculate rootMeanSquare of each yawDegree # 
-def calculateRootMeanSquare(value):
-    idxRow=0
-    idxCollum=0
-    count=1
-    RMS=0
+# # Function to calculate rootMeanSquare of each yawDegree # 
+# def calculateRootMeanSquare(value):
+#     idxRow=0
+#     idxCollum=0
+#     count=1
+#     RMS=0
 
-    # idxRow here need to adjust ( Because now is setting 3 rounds -> range 2 is enough )
-    # This function will scan for all -> Find the yawDegree to calculate the mean of value # 
-    for idxRow in range(5):
-        for idxCollum in range(8000):
-            if(array_2d[idxRow][idxCollum].value1== value and array_2d[idxRow][idxCollum].value2 !=0 and array_2d[idxRow][idxCollum].value2 <500):
-                RMS= RMS + array_2d[idxRow][idxCollum].value2* array_2d[idxRow][idxCollum].value2
-                count= count+1
-                break
-    return math.sqrt(RMS/count)
+#     # idxRow here need to adjust ( Because now is setting 3 rounds -> range 2 is enough )
+#     # This function will scan for all -> Find the yawDegree to calculate the mean of value # 
+#     for idxRow in range(5):
+#         for idxCollum in range(8000):
+#             if(array_2d[idxRow][idxCollum].value1== value and array_2d[idxRow][idxCollum].value2 !=0 and array_2d[idxRow][idxCollum].value2 <500):
+#                 RMS= RMS + array_2d[idxRow][idxCollum].value2* array_2d[idxRow][idxCollum].value2
+#                 count= count+1
+#                 break
+#     return math.sqrt(RMS/count)
 
-                
+#UPDATE
 
-# Function to call each yawDegree to calculate rootMeanSquare       
+import numpy as np
+from filterpy.kalman import KalmanFilter
+
+# Initialize Kalman Filter
+kf = KalmanFilter(dim_x=2, dim_z=1)  # 2 states, 1 measurement
+
+# Define transition matrix (state transition model)
+kf.F = np.array([[1, 1],
+                 [0, 1]])
+
+# Define measurement function
+kf.H = np.array([[1, 0]])
+
+# Define measurement noise covariance
+kf.R = 0.1
+
+# Initialize state and covariance
+kf.x = np.array([0, 0])  # Initial state [position, velocity]
+kf.P = np.eye(2)  # Initial covariance
+
 def rootMeanSquare():
-    idx=0
-    RMSResult=0
-
-    # For idx of posArray to calculate the mean of its yawDegree | For example: at yawDegree: 0.8 -> We have 0.7; 1.0 -> Get the mean of its distance #
+    # Your existing code
     for idx in range(len(posArray)):
-        RMSResult=calculateRootMeanSquare(posArray[idx])
-
+        RMSResult = calculateRootMeanSquare(posArray[idx])
+        
+        # Measurement from sensor
+        z = RMSResult
+        
+        # Kalman prediction step
+        kf.predict()
+        
+        # Kalman update step
+        kf.update(z)
+        
+        # Get the filtered position estimation
+        filtered_position = kf.x[0]
+        
         # Calculate xAxesValue and yAxesValue to draw 
-        xAxesValue= RMSResult*(np.cos(posArray[idx]*3.14/180))
-        yAxesValue= RMSResult*(np.sin(posArray[idx]*3.14/180))
+        xAxesValue = filtered_position * (np.cos(posArray[idx] * np.pi / 180))
+        yAxesValue = filtered_position * (np.sin(posArray[idx] * np.pi / 180))
         xAxes.append(xAxesValue)
         yAxes.append(yAxesValue)
-
-        # This writeList is to store in file # 
+        
+        # This writeList is to store in file
         writeList = [posArray[idx], xAxesValue, yAxesValue]
         with open('storeData.csv', 'a', encoding='UTF8', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(writeList)        
+            writer.writerow(writeList)
+                    
+
+# # Function to call each yawDegree to calculate rootMeanSquare       
+# def rootMeanSquare():
+#     idx=0
+#     RMSResult=0
+
+#     # For idx of posArray to calculate the mean of its yawDegree | For example: at yawDegree: 0.8 -> We have 0.7; 1.0 -> Get the mean of its distance #
+#     for idx in range(len(posArray)):
+#         RMSResult=calculateRootMeanSquare(posArray[idx])
+
+#         # Calculate xAxesValue and yAxesValue to draw 
+#         xAxesValue= RMSResult*(np.cos(posArray[idx]*3.14/180))
+#         yAxesValue= RMSResult*(np.sin(posArray[idx]*3.14/180))
+#         xAxes.append(xAxesValue)
+#         yAxes.append(yAxesValue)
+
+#         # This writeList is to store in file # 
+#         writeList = [posArray[idx], xAxesValue, yAxesValue]
+#         with open('storeData.csv', 'a', encoding='UTF8', newline='') as file:
+#             writer = csv.writer(file)
+#             writer.writerow(writeList)        
     
 
 # Define function drawing 2D Mapping
