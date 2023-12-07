@@ -10,7 +10,7 @@ num_rows, num_columns = df.shape
 
 total_index = 3201
 theta_ = 40
-index_io = math.floor(40 * total_index / 360)
+index_io = math.floor(43 * 3201 / 360)
 print(index_io)
 
 the0 = df['Degree0']
@@ -39,7 +39,7 @@ for i in range(total_index):
     else:
         P0_new[:,i] = P0[:,i + index_io]
 
-the = math.radians(40)
+the = math.radians(43)
 tx = 17
 ty = -43
 
@@ -57,10 +57,24 @@ Pnew = np.dot(matrix_T, P1)
 x_coords = Pnew[0, :]  # Hàng 0 là tọa độ x
 y_coords = Pnew[1, :]  # Hàng 1 là tọa độ y
 
+def shift_arr(arr ,index):
+    if index >= 0:
+        result = np.roll(arr, len(x0) - abs(index))
+    else:
+        result = np.roll(arr, index)
+    return result
+
+x0_test = shift_arr(x0, index_io)
+y0_test = shift_arr(y0, index_io)
+z0_test = shift_arr(z0, index_io)
+print(x0_test[700], y0_test[700])
+print(x_coords[700], y_coords[700])
+
 fig, ax = plt.subplots(1, 1)
 
 ax.scatter(x0,y0,s=0.1,c='green')
-ax.scatter(x1, y1, s=0.1, c = 'red')
+# ax.scatter(x1, y1, s=0.1, c = 'red')
+ax.scatter(x_coords[700], y_coords[700], s=10, c = 'red')
 ax.scatter(x_coords, y_coords, s=0.1, c = 'blue')
 ax.scatter(0, 0, s=30, c = 'red')
 ax.set_xlim(-400, 400)

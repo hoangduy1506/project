@@ -28,118 +28,6 @@ xAxes=[]
 yAxes=[]
 posArray= []
 
-# # Define function drawing 3D Mapping 
-# def drawing3D():
-#     # myFigure = plt.figure(dpi=200, figsize=(10,10))
-#     # ax = plt.axes(projection ='3d')
-#     xAxes=[]
-#     yAxes=[]
-#     zAxes=[]
-    
-#     xAxes1=[]
-#     yAxes1=[]
-#     zAxes1=[]
-    
-#     xAxes2=[]
-#     yAxes2=[]
-#     zAxes2=[]
-    
-#     limit_of_data = True
-#     changePOV= True
-#     # Read file to store # 
-#     with open("data3D.txt", "a") as file:
-#        while limit_of_data:
-#            while arduino.in_waiting == 0:
-#                 pass
-#             # Read data from arduino # 
-#            dataPacket = arduino.readline()
-#            dataPacket  = str(dataPacket, 'utf-8')    
-#            dataPacket  = dataPacket.strip('\r\n')
-#            if (dataPacket == 'End Data'):
-#                 limit_of_data = False
-#            else:
-#                 # Calculate to draw 3D # 
-#                 splitData = dataPacket.split(',')
-#                 dist    = float(splitData[2])
-#                 pitch   = float(splitData[1]) *3.14/180
-#                 yaw     = float(splitData[0]) *3.14/180
-                
-#                 xAxes.append(dist*(np.cos(pitch))*(np.cos(yaw)))
-#                 yAxes.append(dist*(np.cos(pitch))*(np.sin(yaw)))
-#                 zAxes.append(dist*(np.sin(pitch)))
-                
-#                 if(yaw>0 and yaw<=3.14):
-#                     xAxes1.append(dist*(np.cos(pitch))*(np.cos(yaw)))
-#                     yAxes1.append(dist*(np.cos(pitch))*(np.sin(yaw)))
-#                     zAxes1.append(dist*(np.sin(pitch)))
-                    
-#                 elif(yaw>3.14 and yaw<=6.28):
-#                     xAxes2.append(dist*(np.cos(pitch))*(np.cos(yaw)))
-#                     yAxes2.append(dist*(np.cos(pitch))*(np.sin(yaw)))
-#                     zAxes2.append(dist*(np.sin(pitch)))
-
-                
-#                 xTemp= dist*(np.cos(pitch))*(np.cos(yaw))               
-#                 yTemp= dist*(np.cos(pitch))*(np.sin(yaw))
-#                 zTemp= dist*(np.sin(pitch))
-                
-#                 print(xTemp,yTemp,zTemp, dist)
-                
-#                 file.write(str(xTemp) + " " + str(yTemp) + " " + str(zTemp))
-#                 file.write('\n')
-    
-#     # loop to input and display user-defined elev, azim, roll
-#     while changePOV:
-#         # get user input for elev, azim, roll
-#         elev = input("Enter the elevation angle in degrees: ")
-#         if elev == 'end':
-#             changePOV= False
-#             break
-#         elev = int(elev)
-
-#         azim = input("Enter the azimuth angle in degrees: ")
-#         if azim == 'end':
-#             changePOV= False
-#             break
-#         azim = int(azim)
-
-#         roll = input("Enter the roll angle in degrees: ")
-#         if roll == 'end':
-#             changePOV= False
-#             break
-#         roll = int(roll)
-        
-#         POVMode= input("Enter the POVMode: ")
-#         if POVMode== 'end':
-#             changePOV= False
-#             break
-#         POVMode= int(POVMode) 
-#         # POVMode=1 to view 0-180 || POVMode=2 to view 180-360 || POVMode=0 To view full
-        
-        
-#         if(1==POVMode):
-#             myFigure = plt.figure(dpi=200, figsize=(10,10))
-#             ax1 = plt.axes(projection ='3d')
-#             ax1.view_init(elev, azim, roll)  
-#             ax1.scatter(xAxes1,yAxes1,zAxes1,s=0.1,c='green')
-#             ax1.scatter(xAxes1[0], yAxes1[0ion ='3d')
-#             ax2.view_init(elev, azim, roll)  
-#             ax2.scatter(xAxes2,yAxes2,zAxes2,s=0.1,c='green')
-#             ax2.scatter(xAxes2[0], yAxes2[0], zAxes2[0], s=30, c = 'red')
-#             plt.title('Elevation: %d°, Azimuth: %d°, Roll: %d°' % (elev, azim, roll))
-#             # display the plot
-#             plt.show()
-        
-#         else:
-#             myFigure = plt.figure(dpi=200, figsize=(10,10))
-#             ax = plt.axes(projection ='3d')
-#             ax.view_init(elev, azim, roll)  
-#             ax.scatter(xAxes,yAxes,zAxes,s=0.1,c='green')
-#             ax.scatter(xAxes[0], yAxes[0], zAxes[0], s=30, c = 'red')
-#             plt.title('Elevation: %d°, Azimuth: %d°, Roll: %d°' % (elev, azim, roll))
-#             # display the plot
-#             plt.show()       
-
 # # Use for collect only 1 yawDegree #
 # def checkInArray(value):
 #     idx=0
@@ -155,29 +43,30 @@ posArray= []
 #         return 1
 
 
-# # Process Array to get posArray that is an array to store only one value for each yawDegree # 
-# def processArray():
-#     idx=0
-#     for idx in range(8000):                                    
-#         if(checkInArray(array_2d[0][idx].value1)==1):
-#             posArray.append(array_2d[0][idx].value1)
 
-# # Function to calculate rootMeanSquare of each yawDegree # 
-# def calculateRootMeanSquare(value):
-#     idxRow=0
-#     idxCollum=0
-#     count=1
-#     RMS=0
+# Process Array to get posArray that is an array to store only one value for each yawDegree # 
+def processArray():
+    idx=0
+    for idx in range(8000):                                    
+        if(checkInArray(array_2d[0][idx].value1)==1):
+            posArray.append(array_2d[0][idx].value1)
 
-#     # idxRow here need to adjust ( Because now is setting 3 rounds -> range 2 is enough )
-#     # This function will scan for all -> Find the yawDegree to calculate the mean of value # 
-#     for idxRow in range(5):
-#         for idxCollum in range(8000):
-#             if(array_2d[idxRow][idxCollum].value1== value and array_2d[idxRow][idxCollum].value2 !=0 and array_2d[idxRow][idxCollum].value2 <500):
-#                 RMS= RMS + array_2d[idxRow][idxCollum].value2* array_2d[idxRow][idxCollum].value2
-#                 count= count+1
-#                 break
-#     return math.sqrt(RMS/count)
+# Function to calculate rootMeanSquare of each yawDegree # 
+def calculateRootMeanSquare(value):
+    idxRow=0
+    idxCollum=0
+    count=1
+    RMS=0
+
+    # idxRow here need to adjust ( Because now is setting 3 rounds -> range 2 is enough )
+    # This function will scan for all -> Find the yawDegree to calculate the mean of value # 
+    for idxRow in range(5):
+        for idxCollum in range(8000):
+            if(array_2d[idxRow][idxCollum].value1== value and array_2d[idxRow][idxCollum].value2 !=0 and array_2d[idxRow][idxCollum].value2 <500):
+                RMS= RMS + array_2d[idxRow][idxCollum].value2* array_2d[idxRow][idxCollum].value2
+                count= count+1
+                break
+    return math.sqrt(RMS/count)
 
 #UPDATE
 
@@ -254,7 +143,7 @@ def rootMeanSquare():
     
 
 # Define function drawing 2D Mapping
-def drawing2D():
+def mode2D():
 
     # Create a new figure #
     fig, ax = plt.subplots()
@@ -296,6 +185,7 @@ def drawing2D():
             # [1] : PosY 0-> 360 
             # [2] : distance get from arduino 
             yawDegree= float(splitData[0])
+            pitchDegree= float(splitData[1])
             dist    = float(splitData[2])
 
             # Set value yawDegree to PosX (value1) || Set value dist -> value2 #
@@ -313,7 +203,7 @@ def drawing2D():
 
     # Process Array to get the quality of 2D mapping # 
     # Process to get an Array of each distance #
-    processArray()
+    # processArray()
 
     # Then when get the Array of each distance -> Process to get rootMeanSquare and get to xAxes, yAxes to draw # 
     rootMeanSquare()
@@ -352,10 +242,6 @@ while programWorking:
     print("Waiting for input number: ")
     modeWorking = input("Enter a mode working: ")
 
-    # robot_pos_x = float(input("Enter robot x_position: "))
-    # robot_pos_y = float(input("Enter robot y_position: "))
-    # robot_pos_z = float(input("Enter robot z_position: "))
-
     # Send to arduino (change modeWorking to bytes)
     arduino.write(bytes(modeWorking, 'utf-8'))
 
@@ -366,8 +252,6 @@ while programWorking:
     if(modeWorking== '0'):
         programWorking= False
     elif (modeWorking== '1'):
-        drawing2D()
-    elif (modeWorking== '2'):
-        drawing3D()
-    
+        mode2D()
+
 #### End Main Thread Program ####
