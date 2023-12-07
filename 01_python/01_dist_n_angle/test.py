@@ -30,112 +30,83 @@ def shift_arr(arr ,index):
         result = np.roll(arr, index)
     return result
 
-# index_io = math.floor(40 * total_index / 360)
+def filter_custom(x0, y0, z0, x1, y1, z1, thre):
+    points1 = np.column_stack((x0, y0, z0))
+    points2 = np.column_stack((x1, y1, z1))
 
-# x0_test = shift_arr(x0, index_io)
-# y0_test = shift_arr(y0, index_io)
-# z0_test = shift_arr(z0, index_io)
+    # Tính toán khoảng cách giữa các điểm
+    distances = np.linalg.norm(points1 - points2, axis=1)
 
-points1 = np.column_stack((x0, y0, z0))
-points2 = np.column_stack((x1, y1, z1))
+    # Tính z-score của khoảng cách
+    z_scores = np.abs(stats.zscore(distances))
 
-# Tính toán khoảng cách giữa các điểm
-distances = np.linalg.norm(points1 - points2, axis=1)
+    # Thiết lập ngưỡng dựa trên z-score (ví dụ: 2 đơn vị độ lệch chuẩn)
+    threshold_z_score = thre
 
-# Tính z-score của khoảng cách
-z_scores = np.abs(stats.zscore(distances))
+    # Lấy chỉ số của các điểm không bị loại bỏ
+    indices_to_keep = np.where(z_scores < threshold_z_score)[0]
 
-# Thiết lập ngưỡng dựa trên z-score (ví dụ: 2 đơn vị độ lệch chuẩn)
-threshold_z_score = 0.3
+    # Tạo lại các mảng x0, y0, x1, y1 chỉ chứa các điểm không bị loại bỏ
+    return x0[indices_to_keep], y0[indices_to_keep], z0[indices_to_keep], x1[indices_to_keep], y1[indices_to_keep], z1[indices_to_keep]
 
-# Lấy chỉ số của các điểm không bị loại bỏ
-indices_to_keep = np.where(z_scores < threshold_z_score)[0]
-
-# Tạo lại các mảng x0, y0, x1, y1 chỉ chứa các điểm không bị loại bỏ
-x0_test = x0[indices_to_keep]
-y0_test = y0[indices_to_keep]
-z0_test = z0[indices_to_keep]
-x1_test = x1[indices_to_keep]
-y1_test = y1[indices_to_keep]
-z1_test = z1[indices_to_keep]
-
+# Hàm residual để tối ưu hóa tx, ty
 def residual(variables, samples):
-    tx, ty, cos_the, sin_the = variables
+    tx, ty = variables
     x0 = samples[:, 0]
     y0 = samples[:, 1]
     x1 = samples[:, 2]
     y1 = samples[:, 3]
 
-    x0_calculated = tx + x1 * cos_the - y1 * sin_the
-    y0_calculated = ty + x1 * sin_the + y1 * cos_the
+    x_predicted = tx + x1 * np.cos(theta_radian) - y1 * np.sin(theta_radian)
+    y_predicted = ty + x1 * np.sin(theta_radian) + y1 * np.cos(theta_radian)
+    return np.concatenate([(x0 - x_predicted), (y0 - y_predicted)])
 
-    return np.concatenate([x0_calculated - x0, y0_calculated - y0])
-
+theta_range = np.arange(0, 360, 1)
 best_theta = 0
 best_tx = 0
 best_ty = 0
-lowest_residual = float('inf')  # Khởi tạo giá trị residual ban đầu là vô cùng lớn
-theta_range = np.arange(0, 360, 1)
+lowest_residual = float('inf')
 
 for theta_degree in theta_range:
-    # Shift data
-    index_io = math.floor(theta_degree * total_index / 360)
-    x0_testing = shift_arr(x0_test, index_io)
-    y0_testing = shift_arr(y0_test, index_io)
-    z0_testing = shift_arr(z0_test, index_io)
-    x1_testing = shift_arr(x1_test, index_io)
-    y1_testing = shift_arr(y1_test, index_io)
-    z1_testing = shift_arr(z1_test, index_io)
+    theta_radian = np.radians(theta_degree)
+    cos_theta = np.cos(theta_radian)
+    sin_theta = np.sin(theta_radian)
 
-    # Giả định ban đầu
-    initial_guess = np.array([0, 0, 1, 0])
-    samples = np.column_stack((x0_testing, y0_testing, x1_testing, y1_testing))
+    index_io = math.floor(theta_degree * 3201 / 360)
 
-    result = least_squares(residual, initial_guess, args=(samples,))
-    tx_optimal, ty_optimal, cos_the_optimal, sin_the_optimal = result.x
-    the_degrees = math.degrees(math.atan2(sin_the_optimal, cos_the_optimal))
+    x0_test = shift_arr(x0, index_io)
+    y0_test = shift_arr(y0, index_io)
+    z0_test = shift_arr(z0, index_io)
+    x1_test = shift_arr(x1, index_io)
+    y1_test = shift_arr(y1, index_io)
+    z1_test = shift_arr(z1, index_io)
+
+    x0_test, y0_test, z0_test, x1_test, y1_test, z1_test = filter_custom(x0_test,
+                                                                         y0_test,
+                                                                         z0_test,
+                                                                         x1_test,
+                                                                         y1_test,
+                                                                         z1_test,
+                                                                         1)
+
+    samples = np.column_stack((x0_test, y0_test, x1_test, y1_test))
+
+    # Tìm tx, ty tương ứng với theta hiện tại
+    variables_init = np.array([0, 0])  # Giả định ban đầu cho tx, ty
+    result = least_squares(residual, variables_init, args=(samples,))
+
+    tx, ty = result.x
     # Tính residual cho tx, ty hiện tại
     current_residual = result.cost
 
     # So sánh với residual tốt nhất hiện tại để cập nhật nếu cần
     if current_residual < lowest_residual:
         lowest_residual = current_residual
-        best_theta = the_degrees
-        best_tx = tx_optimal
-        best_ty = ty_optimal
+        best_theta = theta_degree
+        best_tx = tx
+        best_ty = ty
 
-
-
-print(f"tx = {best_tx}")
-print(f"ty = {best_ty}")
-print(f"the = {best_theta} degrees")
-
-# P1 = np.vstack((x1, y1, np.resize(z1, len(x1)), [1] * len(x1)))
-# the = math.radians(the_degrees)
-# tx = tx_optimal
-# ty = ty_optimal
-
-# # Ma trận chuyển đổi đồng nhất
-# matrix_T = [
-#     [np.cos(the),   -(np.sin(the)), 0,  tx],
-#     [np.sin(the),   np.cos(the),    0,  ty],
-#     [0,             0,              1,  0],
-#     [0,             0,              0,  1]
-# ]
-# matrix_T = np.array(matrix_T)
-# Pnew = np.dot(matrix_T, P1)
-
-# # Trích xuất tọa độ x và y từ ma trận
-# x_coords = Pnew[0, :]  # Hàng 0 là tọa độ x
-# y_coords = Pnew[1, :]  # Hàng 1 là tọa độ y
-
-# fig, ax = plt.subplots(1, 1)
-
-# ax.scatter(x0,y0,s=0.1,c='green')
-# ax.scatter(x_coords, y_coords, s=0.1, c = 'blue')
-# ax.scatter(0, 0, s=20, c = 'red')
-# ax.scatter(tx, ty, s=20, c = 'red')
-# ax.set_xlim(-400, 400)
-# ax.set_ylim(-400, 400)
-
-# plt.show()
+# Kết quả cuối cùng
+print(f"Best theta: {best_theta} degrees")
+print(f"Best tx   : {best_tx}")
+print(f"Best ty   : {best_ty}")
